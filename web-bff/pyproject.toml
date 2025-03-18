@@ -1,0 +1,56 @@
+[tool.ruff]
+# Use Black-compatible line length
+line-length = 88
+
+# Enable automatic fixing of issues
+fix = true
+
+# Files and directories to exclude from linting
+exclude = [
+    ".git",
+    "__pycache__",
+    "migrations",
+    "venv",
+    ".venv",
+    "tests",
+]
+
+# Enable essential linting rules
+select = [
+    "E",  # Pycodestyle (Error)
+    "F",  # Pyflakes (Bugs)
+    "W",  # Pycodestyle (Warnings)
+    "I",  # isort (Import sorting)
+    "C90",  # mccabe (Complexity)
+    "N",  # Naming conventions
+    "B",  # Bugbear (Code safety)
+    "UP",  # pyupgrade (Upgrade syntax)
+    "ASYNC",  # async-specific rules
+]
+
+# Ignore specific rules (adjust as needed)
+ignore = [
+    "E501",  # Ignore long lines (handled by Black)
+    "B008",  # Ignore function argument default to list/dict
+    "C901",  # Ignore function complexity (adjust if needed)
+]
+
+# Set the target Python version
+target-version = "py310"  # Adjust according to your FastAPI project
+
+[tool.ruff.isort]
+# Ensure imports are grouped logically
+known-first-party = ["app"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.flake8-quotes]
+# Ensure consistent use of double quotes
+inline-quotes = "double"
+
+[tool.ruff.mccabe]
+# Set the maximum allowed complexity for functions
+max-complexity = 10
+
+[tool.ruff.pyupgrade]
+# Upgrade syntax for newer Python versions
+keep-runtime-typing = true
