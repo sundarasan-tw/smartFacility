@@ -24,6 +24,12 @@ jobs:
           source venv/bin/activate
           pip install -r requirements.txt
           pip install flake8 black   # Install linters and formatters
+          
+      - name: Check Code Formatting (black)
+        working-directory: web-bff  
+        run: |
+          source venv/bin/activate
+          black --check .        
 
       - name: Run Linting (flake8)
         working-directory: web-bff  
@@ -31,11 +37,6 @@ jobs:
           source venv/bin/activate
           flake8 . --count --show-source --statistics
 
-      - name: Check Code Formatting (black)
-        working-directory: web-bff  
-        run: |
-          source venv/bin/activate
-          black --check .    
 
       - name: Run FastAPI app
         working-directory: web-bff  
