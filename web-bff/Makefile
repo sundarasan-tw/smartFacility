@@ -4,7 +4,7 @@ setup:
 
 # Run FastAPI app
 run:
-	source venv/bin/activate && uvicorn main:app --reload
+	source venv/bin/activate && uvicorn app.main:app --reload
 
 # Deactivate virtual environment
 deactivate:
