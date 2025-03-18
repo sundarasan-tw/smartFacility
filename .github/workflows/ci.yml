@@ -23,7 +23,7 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install -r requirements.txt
-          pip install flask8 black   # Install linters and formatters
+          pip install flake8 black   # Install linters and formatters
 
       - name: Run Linting (flake8)
         working-directory: web-bff  
