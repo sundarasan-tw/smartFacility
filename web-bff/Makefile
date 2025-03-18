@@ -13,3 +13,18 @@ deactivate:
 # Clean up environment (removes venv)
 clean:
 	rm -rf venv __pycache__
+
+lint:
+	ruff check .
+
+lint-fix:
+	ruff check --fix .
+
+format:
+	ruff format .
+
+test:
+	pytest --asyncio-mode=auto tests/
+
+test-cover:
+	pytest --asyncio-mode=auto --cov=app tests/
