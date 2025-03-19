@@ -26,3 +26,7 @@ test-bff:
 test-cover-bff:
 	@echo "Running Web bff test coverage..."
 	@cd web-bff && mise exec -- pytest --asyncio-mode=auto --cov=app tests/
+
+run-web:
+	@echo "Running web server..."
+	@cd web && npm run dev

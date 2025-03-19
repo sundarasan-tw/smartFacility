@@ -69,3 +69,10 @@ Replace `<package_name>` with the name of the package.
 If you have any questions or need assistance, feel free to open an issue or reach out to the maintainers.
 
 Thank you for contributing!
+
+### To run the web app
+
+To run the web app locally:
+```bash
+make run-web
+```
