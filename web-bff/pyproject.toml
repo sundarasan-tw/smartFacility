@@ -7,36 +7,36 @@ fix = true
 
 # Files and directories to exclude from linting
 exclude = [
-    ".git",
-    "__pycache__",
-    "migrations",
-    "venv",
-    ".venv",
-    "tests",
+  ".git",
+  "__pycache__",
+  "migrations",
+  "venv",
+  ".venv",
+  "tests",
 ]
 
 # Enable essential linting rules
 select = [
-    "E",  # Pycodestyle (Error)
-    "F",  # Pyflakes (Bugs)
-    "W",  # Pycodestyle (Warnings)
-    "I",  # isort (Import sorting)
-    "C90",  # mccabe (Complexity)
-    "N",  # Naming conventions
-    "B",  # Bugbear (Code safety)
-    "UP",  # pyupgrade (Upgrade syntax)
-    "ASYNC",  # async-specific rules
+  "E", # Pycodestyle (Error)
+  "F", # Pyflakes (Bugs)
+  "W", # Pycodestyle (Warnings)
+  "I", # isort (Import sorting)
+  "C90", # mccabe (Complexity)
+  "N", # Naming conventions
+  "B", # Bugbear (Code safety)
+  "UP", # pyupgrade (Upgrade syntax)
+  "ASYNC", # async-specific rules
 ]
 
 # Ignore specific rules (adjust as needed)
 ignore = [
-    "E501",  # Ignore long lines (handled by Black)
-    "B008",  # Ignore function argument default to list/dict
-    "C901",  # Ignore function complexity (adjust if needed)
+  "E501", # Ignore long lines (handled by Black)
+  "B008", # Ignore function argument default to list/dict
+  "C901", # Ignore function complexity (adjust if needed)
 ]
 
 # Set the target Python version
-target-version = "py310"  # Adjust according to your FastAPI project
+target-version = "py310" # Adjust according to your FastAPI project
 
 [tool.ruff.isort]
 # Ensure imports are grouped logically
@@ -54,3 +54,52 @@ max-complexity = 10
 [tool.ruff.pyupgrade]
 # Upgrade syntax for newer Python versions
 keep-runtime-typing = true
+
+[project]
+authors = [
+  {name = "crk4", email = "ranjith.kea@gmail.com"},
+]
+dependencies = [
+  "annotated-types (==0.7.0)",
+  "anyio (==4.9.0)",
+  "certifi (==2025.1.31)",
+  "cfgv (==3.4.0)",
+  "click (==8.1.8)",
+  "coverage (==7.7.0)",
+  "distlib (==0.3.9)",
+  "fastapi (==0.115.11)",
+  "filelock (==3.18.0)",
+  "h11 (==0.14.0)",
+  "httpcore (==1.0.7)",
+  "httpx (==0.28.1)",
+  "identify (==2.6.9)",
+  "idna (==3.10)",
+  "iniconfig (==2.0.0)",
+  "nodeenv (==1.9.1)",
+  "packaging (==24.2)",
+  "platformdirs (==4.3.6)",
+  "pluggy (==1.5.0)",
+  "pre-commit (==4.1.0)",
+  "pydantic (==2.10.6)",
+  "pydantic-core (==2.27.2)",
+  "pytest (==8.3.5)",
+  "pytest-asyncio (==0.25.3)",
+  "pytest-cov (==6.0.0)",
+  "pyyaml (==6.0.2)",
+  "respx (==0.22.0)",
+  "ruff (==0.11.0)",
+  "sniffio (==1.3.1)",
+  "starlette (==0.46.1)",
+  "typing-extensions (==4.12.2)",
+  "uvicorn (==0.34.0)",
+  "virtualenv (==20.29.3)",
+]
+description = "This is a backend for frontend service for web ui of smarty platform"
+name = "smarty-web-bff"
+readme = "README.md"
+requires-python = ">=3.13"
+version = "0.1.0"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
