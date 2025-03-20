@@ -1,3 +1,6 @@
+[tool.poetry.dependencies]
+python = "3.13.2"
+
 [tool.ruff]
 # Use Black-compatible line length
 line-length = 88
