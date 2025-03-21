@@ -7,3 +7,8 @@ repos:
     - id: ruff
     # Run the formatter.
     - id: ruff-format
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0 # Use the appropriate version
+  hooks:
+    - id: no-commit-to-branch
+      args: [--branch, main]
