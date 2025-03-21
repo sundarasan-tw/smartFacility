@@ -1,10 +1,6 @@
 on:
   push:
-    branches:
-      - main  
   pull_request:
-    branches:
-      - main
 
 jobs:
   web-bff:
@@ -35,6 +31,43 @@ jobs:
           done
           echo "Service did not start in time" && exit 1
 
-      - name: Run tests
+      # - name: Run tests
+      #   run: |
+      #     docker exec web-bff-container mise exec -- poetry run pytest --asyncio-mode=auto tests/
+
+      - name: Install pytest-html
         run: |
-          docker exec web-bff-container mise exec -- poetry run pytest --asyncio-mode=auto tests/
+          docker exec web-bff-container mise exec -- poetry add pytest-html
+
+      - name: Run tests and generate HTML report
+        run: |
+          docker exec web-bff-container mise exec -- poetry run pytest --asyncio-mode=auto --html=/tmp/pytest_report.html --self-contained-html tests/
+
+      - name: Copy test report from container to host
+        run: |
+          docker cp web-bff-container:/tmp/pytest_report.html ./pytest_report.html
+
+      - name: Upload test report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: pytest_report.html
+
+  deploy:
+      needs: web-bff
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+
+        - name: Download Test Report Artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: pytest-report
+            path: public
+
+        - name: Setup GitHub Pages
+          uses: actions/configure-pages@v4
+
+        - name: Deploy to GitHub Pages
+          uses: actions/deploy-pages@v4
