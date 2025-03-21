@@ -23,6 +23,11 @@ test-bff:
 	@echo "Running Web bff tests with coverage..."
 	@poetry run pytest --asyncio-mode=auto --cov=app tests/
 
+set-pre-commit-hook-bff:
+	@echo "Setting up pre-commit hook in your git repository..."
+	poetry add pre-commit
+	poetry run pre-commit install
+
 docker-build-bff:
 	@echo "Building Web bff Docker image..."
 	docker build -t web-bff -f docker/web-bff.Dockerfile .
