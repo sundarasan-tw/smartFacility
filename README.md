@@ -5,8 +5,8 @@ A unified platform that integrates smart devices across diverse facilities, empo
 
 ### Requirements
 
-1. [Docker](https://docs.docker.com/get-started/get-docker)
-2. [Makefile](https://formulae.brew.sh/formula/make) _(Optional)_ ([What is Makefile?](https://opensource.com/article/18/8/what-how-makefile))
+1. [Docker](https://docs.docker.com/get-started/get-docker) - v27.x
+2. [make](https://formulae.brew.sh/formula/make) - v3.x _(Optional)_ ([What is Makefile?](https://opensource.com/article/18/8/what-how-makefile))
 
 ### To run the project
 
