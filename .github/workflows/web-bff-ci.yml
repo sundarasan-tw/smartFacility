@@ -26,9 +26,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/web-bff:latest -f web-bff/Dockerfile .
         working-directory: web-bff
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/web-bff:latest -f Dockerfile .
 
       - name: Push Docker image to GitHub Container Registry
         run: |
