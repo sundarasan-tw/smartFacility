@@ -55,9 +55,14 @@ max-complexity = 10
 # Upgrade syntax for newer Python versions
 keep-runtime-typing = true
 
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+python_files = ["test_*.py"]
+testpaths = ["tests"]
+
 [project]
 authors = [
-  {name = "crk4", email = "ranjith.kea@gmail.com"},
+  {name = "ranjithkumar", email = "ranjithkumar.c@thoughtworks.com"},
 ]
 dependencies = [
   "annotated-types (==0.7.0)",
@@ -97,7 +102,7 @@ dependencies = [
 description = "This is a backend for frontend service for web ui of smarty platform"
 name = "smarty-web-bff"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13.2"
 version = "0.1.0"
 
 [build-system]

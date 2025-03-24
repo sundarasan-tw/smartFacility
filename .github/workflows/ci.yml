@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
   web-bff:
     runs-on: ubuntu-latest
@@ -12,37 +13,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Install dependencies
-        working-directory: web-bff  
+      - name: Build and run web-bff container
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-          pip install flake8 black   # Install linters and formatters
+          docker stop web-bff-container || true
+          docker rm web-bff-container || true
+          docker build -t web-bff -f docker/web-bff.Dockerfile .
+          docker run -d --name web-bff-container -p 8000:8000 web-bff
 
-      - name: Check Code Formatting (black)
-        working-directory: web-bff  
+      - name: Wait for service to be ready
         run: |
-          source venv/bin/activate
-          black .        
+          for i in {1..10}; do
+            if curl -s http://localhost:8000/health > /dev/null; then
+              echo "Service is up!"
+              exit 0
+            fi
+            echo "Waiting for service..."
+            sleep 2
+          done
+          echo "Service did not start in time" && exit 1
 
-      - name: Run Linting (flake8)
-        working-directory: web-bff  
+      - name: Run tests
         run: |
-          source venv/bin/activate
-          flake8 . --count --show-source --statistics
-
-
-      - name: Run FastAPI app
-        working-directory: web-bff  
-        run: |
-          source venv/bin/activate
-          uvicorn main:app --host 127.0.0.1 --port 8000 &
-
-      - name: Check if service is running
-        run: curl -f http://127.0.0.1:8000/
+          docker exec web-bff-container mise exec -- poetry run pytest --asyncio-mode=auto tests/
