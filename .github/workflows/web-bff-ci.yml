@@ -28,6 +28,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/web-bff:latest -f web-bff/Dockerfile .
+        working-directory: ./web-bff
 
       - name: Push Docker image to GitHub Container Registry
         run: |
