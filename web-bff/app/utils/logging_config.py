@@ -1,3 +1,4 @@
+import json
 import logging
 import logging.config
 from pathlib import Path
@@ -6,35 +7,15 @@ from pathlib import Path
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
 
-# Logging Configuration
-LOGGING_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "default": {"format": "%(asctime)s - %(levelname)s - %(name)s - %(message)s"},
-        "detailed": {
-            "format": "%(asctime)s - %(levelname)s - %(name)s - %(filename)s - %(lineno)d - %(message)s"
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "default",
-            "level": "DEBUG",
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": LOG_DIR / "app.log",
-            "formatter": "detailed",
-            "level": "DEBUG",
-            "mode": "a",  # Append mode
-        },
-    },
-    "root": {
-        "handlers": ["console", "file"],
-        "level": "DEBUG",
-    },
-}
+# Load logging configuration from external JSON file
+LOGGING_CONFIG_FILE = Path("app/config/logging_config.json")  # Updated path
+if LOGGING_CONFIG_FILE.exists():
+    with open(LOGGING_CONFIG_FILE) as config_file:
+        LOGGING_CONFIG = json.load(config_file)
+else:
+    raise FileNotFoundError(
+        f"Logging configuration file not found: {LOGGING_CONFIG_FILE}"
+    )
 
 # Apply logging configuration
 logging.config.dictConfig(LOGGING_CONFIG)
