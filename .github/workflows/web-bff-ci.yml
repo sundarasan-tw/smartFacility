@@ -1,0 +1,41 @@
+on:
+  push:
+    paths:
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
+    paths-ignore:
+      - '**/*.md' # Ignore Markdown files
+      - '**/.editorconfig' # Ignore EditorConfig files
+      - '**/.pre-commit-config.yaml' # Ignore YAML files
+  pull_request:
+    paths:
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
+    paths-ignore:
+      - '**/*.md' # Ignore Markdown files
+      - '**/*.editorconfig' # Ignore EditorConfig files
+      - '**/.pre-commit-config.yaml' # Ignore YAML files
+
+jobs:
+  web-bff:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write # Grant write permissions for packages
+      contents: read  # Ensure the workflow can read repository contents
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        working-directory: web-bff
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/web-bff:latest -f Dockerfile .
+
+      - name: Push Docker image to GitHub Container Registry
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/web-bff:latest
