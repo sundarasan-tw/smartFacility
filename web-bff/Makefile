@@ -14,28 +14,28 @@ run-bff:
 	@$(MAKE) setup-bff
 	@poetry run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 
-pre-commit-bff:
-	@echo "Running pre-commit tasks (lint fix and format)..."
-	@poetry run ruff check --fix .
-	@poetry run ruff format .
+# pre-commit-bff:
+# 	@echo "Running pre-commit tasks (lint fix and format)..."
+# 	@poetry run ruff check --fix .
+# 	@poetry run ruff format .
 
-test-bff:
-	@echo "Running Web bff tests with coverage..."
-	@poetry run pytest --asyncio-mode=auto --cov=app tests/
+# test-bff:
+# 	@echo "Running Web bff tests with coverage..."
+# 	@poetry run pytest --asyncio-mode=auto --cov=app tests/
 
-set-pre-commit-hook-bff:
-	@echo "Setting up pre-commit hook in your git repository..."
-	poetry add pre-commit
-	poetry run pre-commit install
+# set-pre-commit-hook-bff:
+# 	@echo "Setting up pre-commit hook in your git repository..."
+# 	poetry add pre-commit
+# 	poetry run pre-commit install
 
-docker-build-bff:
-	@echo "Building Web bff Docker image..."
-	docker build -t web-bff -f docker/web-bff.Dockerfile .
+# docker-build-bff:
+# 	@echo "Building Web bff Docker image..."
+# 	docker build -t web-bff -f docker/web-bff.Dockerfile .
 
-docker-run-bff: docker-build-bff
-	@echo "Running Web bff Docker container..."
-	@docker run -p 8000:8000 web-bff
+# docker-run-bff: docker-build-bff
+# 	@echo "Running Web bff Docker container..."
+# 	@docker run -p 8000:8000 web-bff
 
-docker-test-bff: docker-build-bff
-	@echo "Running Web bff tests in Docker..."
-	@docker run web-bff poetry run pytest --asyncio-mode=auto tests/
+# docker-test-bff: docker-build-bff
+# 	@echo "Running Web bff tests in Docker..."
+# 	@docker run web-bff poetry run pytest --asyncio-mode=auto tests/
