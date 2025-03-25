@@ -3,12 +3,16 @@ on:
     paths:
       - 'web-bff/**' # Trigger only for changes in the web-bff folder
     paths-ignore:
-      - '**/*.md' # Ignore Markdown files (e.g., documentation)
+      - '**/*.md' # Ignore Markdown files
+      - '**/.editorconfig' # Ignore EditorConfig files
+      - '**/.pre-commit-config.yaml' # Ignore YAML files
   pull_request:
     paths:
       - 'web-bff/**' # Trigger only for changes in the web-bff folder
     paths-ignore:
-      - '**/*.md' # Ignore Markdown files (e.g., documentation)
+      - '**/*.md' # Ignore Markdown files
+      - '**/*.editorconfig' # Ignore EditorConfig files
+      - '**/.pre-commit-config.yaml' # Ignore YAML files
 
 jobs:
   web-bff:
