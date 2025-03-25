@@ -1,15 +1,10 @@
 on:
   push:
-    branches:
-      - main
     paths:
-      - 'web-bff/**' # Trigger only for changes in the web-bff directory
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
   pull_request:
-    branches:
-      - main
-      - '**' # Trigger for all PR branches
     paths:
-      - 'web-bff/**' # Trigger only for changes in the web-bff directory
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
 
 jobs:
   web-bff:
