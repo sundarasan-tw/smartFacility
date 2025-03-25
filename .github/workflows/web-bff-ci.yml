@@ -2,9 +2,13 @@ on:
   push:
     paths:
       - 'web-bff/**' # Trigger only for changes in the web-bff folder
+    paths-ignore:
+      - '**/*.md' # Ignore Markdown files (e.g., documentation)
   pull_request:
     paths:
       - 'web-bff/**' # Trigger only for changes in the web-bff folder
+    paths-ignore:
+      - '**/*.md' # Ignore Markdown files (e.g., documentation)
 
 jobs:
   web-bff:
