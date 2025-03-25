@@ -2,8 +2,12 @@ FROM python:3.13-slim
 
 WORKDIR /src
 
-# Install make and other dependencies
-RUN apt-get update && apt-get install -y make gcc curl && rm -rf /var/lib/apt/lists/*
+# Install make, gcc, and curl with specific versions
+RUN apt-get update && apt-get install -y \
+    make=4.3-4 \
+    gcc=4:12.2.0-14 \
+    curl=7.88.1-10+deb12u1 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy project files
 COPY Makefile ./
