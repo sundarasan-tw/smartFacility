@@ -1,5 +1,3 @@
-import logging
-
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -9,7 +7,14 @@ from app.domain.service_interfaces.device_service import IDeviceService
 from app.presentation.device_routes import device_router
 from app.utils.logging_config import logger
 
-app = FastAPI(title="Smarty Web BFF Service")
+
+async def lifespan(app: FastAPI):
+    logger.info("Starting up the Web BFF app...")
+    yield
+    logger.info("Shutting down the Web BFF app...")
+
+
+app = FastAPI(title="Smarty Web BFF Service", lifespan=lifespan)
 
 # Add CORS middleware (optional, for cross-origin requests)
 app.add_middleware(
@@ -31,16 +36,6 @@ async def log_requests(request: Request, call_next):
     response = await call_next(request)
     logger.info(f"Response status: {response.status_code}")
     return response
-
-
-@app.on_event("startup")
-async def startup_event():
-    logger.info("Starting up the Web BFF app...")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    logger.info("Shutting down the Web BFF app...")
 
 
 app.include_router(device_router, prefix="/api")
