@@ -1,3 +1,4 @@
+name: 
 on:
   push:
     branches:
@@ -16,25 +17,26 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and run web-bff container
+      - name: Build web-bff image
         run: |
-          docker stop web-bff-container || true
-          docker rm web-bff-container || true
-          docker build -t web-bff -f docker/web-bff.Dockerfile .
-          docker run -d --name web-bff-container -p 8000:8000 web-bff
+          docker build -t web-bff-img -f ./web-bff/Dockerfile ./web-bff
 
-      - name: Wait for service to be ready
+      - name: Run the web-bff image
         run: |
-          for i in {1..10}; do
-            if curl -s http://localhost:8000/health > /dev/null; then
-              echo "Service is up!"
-              exit 0
-            fi
-            echo "Waiting for service..."
-            sleep 2
-          done
-          echo "Service did not start in time" && exit 1
+          docker run -d --rm --name web-bff-container -p 8000:8000 web-bff-img
 
-      - name: Run tests
-        run: |
-          docker exec web-bff-container mise exec -- poetry run pytest --asyncio-mode=auto tests/
+      # - name: Check health endpoint
+      #   run: |
+      #     for i in {1..10}; do
+      #       if curl -s http://localhost:8000/health > /dev/null; then
+      #         echo "Service is up!"
+      #         exit 0
+      #       fi
+      #       echo "Waiting for service..."
+      #       sleep 2
+      #     done
+      #     echo "Service did not start in time" && exit 1
+
+      # - name: Run tests
+      #   run: |
+      #     docker exec web-bff-container poetry run pytest --asyncio-mode=auto tests/

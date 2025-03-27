@@ -6,8 +6,7 @@ Thank you for considering contributing to the Smart Facility project! We welcome
 1. [Folder Structure](#folder-structure)
 2. [Development Workflow](#development-workflow)
    - [Running the App](#running-the-app)
-   - [Pre Commit Check](#pre-commit-check)
-   - [Running Tests](#running-tests)
+   <!-- - [Running Tests](#running-tests) -->
 3. [Submitting Changes](#submitting-changes)
 4. [Need Help?](#need-help)
 
@@ -18,6 +17,9 @@ smartFacility/
 │   ├── app/               # Application source code
 │   ├── tests/             # Test cases
 │   ├── Makefile           # Makefile for web-bff
+|   |── Dockerfile         # Production dockerfile
+|   |── Dockerfile.dev     # Local development dockerfile
+├── scripts/               # Scripts for local development
 ├── Makefile               # Root Makefile for managing sub-projects
 ├── CONTRIBUTING.md        # Contribution guidelines
 ├── README.md              # Project overview and setup instructions
@@ -28,20 +30,17 @@ smartFacility/
 ### Running the App
 To run the Web BFF app locally:
 ```bash
-make run-bff
+./scripts/dev-run-bff.sh
 ```
 
-### Pre commit check
-- To fix linting issues and format automatically:
-  ```bash
-  make pre-commit-bff
-  ```
+<!--
+TODO: Update this sections once we have test setup
 
 ### Running Tests
 - To run the test suite with test coverage report:
   ```bash
   make test-bff
-  ```
+  ``` -->
 
 ## Submitting Changes
 
