@@ -13,7 +13,7 @@ A unified platform that integrates smart devices across diverse facilities, empo
 
 3. Run the application:
    ```bash
-   make run-bff
+   # TODO: Add "docker compose up" command here once docker compose setup is done
    ```
 
 ### Logging

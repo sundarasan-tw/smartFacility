@@ -1,0 +1,32 @@
+# Build the application
+FROM python:3.13-slim
+
+VOLUME ["/src/app", "/src/tests"]
+
+ENV APP_HOME=/src
+
+# Install dependencies
+RUN apt-get update && apt-get -y --no-install-recommends install \
+    curl make \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instructs poetry to create a virtual environment (/.venv) in the project root directory
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+
+WORKDIR $APP_HOME
+
+# Copy project files
+COPY pyproject.toml poetry.lock ./
+COPY Makefile ./
+
+# Install dependencies
+RUN make setup
+
+# Set the virtual environment path
+ENV PATH="$APP_HOME/.venv/bin:$PATH"
+
+COPY app ./app
+
+ENTRYPOINT ["make"]
+
+CMD ["run"]
