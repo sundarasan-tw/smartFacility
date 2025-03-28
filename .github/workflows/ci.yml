@@ -86,8 +86,14 @@ jobs:
       #   with:
       #     path: ./web-bff/reports/
 
+      - name: Print Folder Tree
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: web-bff/reports/
+          depth: 5
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./web-bff/reports/
+          folder: web-bff/reports/
 
