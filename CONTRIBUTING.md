@@ -33,14 +33,23 @@ To run the Web BFF app locally:
 ./scripts/dev-run-bff.sh
 ```
 
-<!--
-TODO: Update this sections once we have test setup
+### Adding the dependency
+To add dependency to the Web BFF app:
+```bash
+./scripts/dev-run-bff.sh poetry-add package={package-name}
+```
 
-### Running Tests
-- To run the test suite with test coverage report:
-  ```bash
-  make test-bff
-  ``` -->
+### Running the tests
+To run tests for Web BFF app:
+```bash
+./scripts/dev-run-bff.sh test
+```
+
+### Capturing the test reports
+To capture the test reports Web BFF app:
+```bash
+./scripts/dev-run-bff.sh test-report
+```
 
 ## Submitting Changes
 
