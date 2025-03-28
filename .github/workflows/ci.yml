@@ -27,9 +27,9 @@ jobs:
 
     permissions:
       packages: write # Grant write permissions for packages
-      contents: read  # Ensure the workflow can read repository contents
-      pages: write    # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
+      contents: write  # Ensure the workflow can write repository contents to deploy github pages
+      # pages: write    # to deploy to Pages
+      # id-token: write # to verify the deployment originates from an appropriate source
 
     steps:
       - name: Checkout code
@@ -78,15 +78,17 @@ jobs:
           name: test-reports
           path: ./web-bff/reports/**
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      # - name: Setup Pages
+      #   uses: actions/configure-pages@v5
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./web-bff/reports/
+      # - name: Upload artifact
+      #   uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: ./web-bff/reports/
 
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        id: Github pages deployment
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./web-bff/reports/
 
