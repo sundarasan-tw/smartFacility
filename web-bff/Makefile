@@ -5,6 +5,7 @@ setup:
 		curl -sSL https://install.python-poetry.org | python3 -; \
 		ln -s $$HOME/.local/bin/poetry /usr/local/bin/poetry; \
 		poetry config virtualenvs.create true; \
+		poetry lock; \
 		poetry install --no-root; \
 	else \
 		echo "Poetry exists. Installing dependencies..."; \
@@ -14,8 +15,16 @@ setup:
 run:
 	@poetry run uvicorn app.main:app --host 0.0.0.0 $(if $(port),--port $(port)) --reload
 
+test-report:
+	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=html:coverage-reports --html="test-reports/test_report.html" --self-contained-html tests/
+
 test:
 	@poetry run pytest --asyncio-mode=auto --cov=app tests/
+
+poetry-add:
+	@poetry add $(package)
+	@poetry lock
+
 
 # pre-commit:
 # 	@echo "Running pre-commit tasks (lint fix and format)..."
