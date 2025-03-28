@@ -73,10 +73,10 @@ jobs:
             web-bff-dev-img \
             test
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: test-reports
-          path: ./web-bff/reports/**
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: test-reports
+      #     path: ./web-bff/reports/**
 
       # - name: Setup Pages
       #   uses: actions/configure-pages@v5
@@ -89,5 +89,5 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./web-bff/reports
+          folder: ./web-bff/reports/
 
