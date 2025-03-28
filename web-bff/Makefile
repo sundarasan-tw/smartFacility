@@ -19,7 +19,7 @@ test-report:
 	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=html:coverage-reports --html="test-reports/test_report.html" --self-contained-html tests/
 
 test:
-	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=html:reports/coverage --html="reports/test/test_report.html" --self-contained-html tests/
+	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=html:reports/coverage --html="reports/test/index.html" --self-contained-html tests/
 
 poetry-add:
 	@poetry add $(package)
