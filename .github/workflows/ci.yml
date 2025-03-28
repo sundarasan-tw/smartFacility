@@ -87,7 +87,6 @@ jobs:
       #     path: ./web-bff/reports/
 
       - name: Deploy to GitHub Pages
-        id: Github pages deployment
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: ./web-bff/reports/
