@@ -7,6 +7,7 @@ from app.dependencies import get_device_api_client, get_device_service
 from app.domain.client_interfaces.device_client import IDeviceAPIClient
 from app.domain.service_interfaces.device_service import IDeviceService
 from app.presentation.device_routes import device_router
+from app.presentation.health_routes import health_router
 from app.utils.logging_config import logger
 
 app = FastAPI(title="Smarty Web BFF Service")
@@ -44,6 +45,7 @@ async def shutdown_event():
 
 
 app.include_router(device_router, prefix="/api")
+app.include_router(health_router)
 
 if __name__ == "__main__":
     import uvicorn
