@@ -40,9 +40,6 @@ virtualenv = "==20.29.3"
 # Use Black-compatible line length
 line-length = 88
 
-# Enable automatic fixing of issues
-fix = true
-
 # Files and directories to exclude from linting
 exclude = [
   ".git",
@@ -53,6 +50,7 @@ exclude = [
   "tests",
 ]
 
+[tool.lint]
 # Enable essential linting rules
 select = [
   "E", # Pycodestyle (Error)
@@ -73,23 +71,20 @@ ignore = [
   "C901", # Ignore function complexity (adjust if needed)
 ]
 
-# Set the target Python version
-target-version = "py310" # Adjust according to your FastAPI project
-
-[tool.ruff.isort]
+[tool.lint.isort]
 # Ensure imports are grouped logically
 known-first-party = ["app"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
 
-[tool.ruff.flake8-quotes]
+[tool.lint.flake8-quotes]
 # Ensure consistent use of double quotes
 inline-quotes = "double"
 
-[tool.ruff.mccabe]
+[tool.lint.mccabe]
 # Set the maximum allowed complexity for functions
 max-complexity = 10
 
-[tool.ruff.pyupgrade]
+[tool.lint.pyupgrade]
 # Upgrade syntax for newer Python versions
 keep-runtime-typing = true
 
