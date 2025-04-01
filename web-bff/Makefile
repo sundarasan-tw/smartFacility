@@ -31,6 +31,19 @@ poetry-add:
 	@poetry add $(package)
 	@poetry lock
 
+# In local dev environment fix lint/format issues if found
+check:
+	@echo "Linting..."
+	@poetry run ruff check --fix .
+	@echo "Linting done.\nNow formatting..."
+	@poetry run ruff format .
+
+# In CI run DO NOT fix lint/format issues instead just report them
+ci-check:
+	@echo "Linting..."
+	@poetry run ruff check .
+	@echo "Linting done.\nNow formatting..."
+	@poetry run ruff format --check .
 
 # pre-commit:
 # 	@echo "Running pre-commit tasks (lint fix and format)..."
