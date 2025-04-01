@@ -1,15 +1,34 @@
 name: 
 on:
+
   push:
-    branches:
-      - main  
+    paths:
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
+      - .github/workflows/**
+
+      # Ignore trigger if changes detected in below paths
+      - '!**/*.md'
+      - '!**/.editorconfig'
+      - '!**/.pre-commit-config.yaml'
+
   pull_request:
-    branches:
-      - main
+    paths:
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
+      - .github/workflows/**
+
+      # Ignore trigger if changes detected in below paths
+      - '!**/*.md'
+      - '!**/.editorconfig'
+      - '!**/.pre-commit-config.yaml'
 
 jobs:
   web-bff:
     runs-on: ubuntu-latest
+
+    permissions:
+      packages: write # Grant write permissions for packages
+      contents: write  # Ensure the workflow can write repository contents to deploy github pages
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,7 +36,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build web-bff image
+      - name: Build web-bff hosted env image
         run: |
           docker build -t web-bff-img -f ./web-bff/Dockerfile ./web-bff
 
@@ -25,18 +44,66 @@ jobs:
         run: |
           docker run -d --rm --name web-bff-container -p 8000:8000 web-bff-img
 
-      # - name: Check health endpoint
-      #   run: |
-      #     for i in {1..10}; do
-      #       if curl -s http://localhost:8000/health > /dev/null; then
-      #         echo "Service is up!"
-      #         exit 0
-      #       fi
-      #       echo "Waiting for service..."
-      #       sleep 2
-      #     done
-      #     echo "Service did not start in time" && exit 1
+      # TODO: Fix health endpoint check
+      # -------------------------------
+      #
+      # - name: Check health
+      #   uses: jtalk/url-health-check-action@v4
+      #   with:
+      #     url: http://localhost:8000/health
+      #     max-attempts: 3
+      #     retry-delay: 3s
 
-      # - name: Run tests
-      #   run: |
-      #     docker exec web-bff-container poetry run pytest --asyncio-mode=auto tests/
+      - name: Stop the web-bff container
+        run: |
+          docker stop web-bff-container
+
+      - name: Build web-bff dev env image
+        run: |
+          docker build -t web-bff-dev-img -f ./web-bff/Dockerfile.dev ./web-bff
+
+      - name: Create current timestamp environment variable
+        run: echo "TIMESTAMP=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
+      - name: Run tests
+        run: |
+          docker run -p 8000:8000 --name web-bff-test-container \
+            -v ./web-bff/tests:/src/tests \
+            -v ./web-bff/reports:/src/reports \
+            --rm \
+            web-bff-dev-img \
+            test
+
+          # Copy the reports into timestamp directory
+          sudo mkdir -p web-bff/reports-temp
+          sudo mv web-bff/reports/* web-bff/reports-temp/
+          sudo mkdir -p web-bff/reports/${TIMESTAMP}
+          sudo mv web-bff/reports-temp/* web-bff/reports/${TIMESTAMP}/
+
+      - name: Fetch existing reports from GitHub Pages
+        run: |
+          git clone --depth=1 --branch=gh-pages https://github.com/${{ github.repository }} gh-pages
+          mkdir -p gh-pages/reports
+          cp -r gh-pages/reports/* web-bff/reports/ || true  # Preserve existing reports
+
+      - name: Keep only the latest 5 reports
+        run: |
+          ls -tp web-bff/reports/ | tail -n +6 | xargs -I {} rm -rf "web-bff/reports/{}"
+
+      - name: Prepare GitHub Pages bundle
+        run: |
+          mkdir gh-pages-bundle
+          cp -r web-bff/reports gh-pages-bundle
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: gh-pages-bundle
+          clean: false # When `true`, it overwrites the static site content on each deployment, when `false` it appends
+
+      - name: Add report links to job summary
+        run: |
+          echo "### 📊 Reports" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- [🔍 Test Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${TIMESTAMP}/test)" >> $GITHUB_STEP_SUMMARY
+          echo "- [📈 Coverage Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${TIMESTAMP}/coverage)" >> $GITHUB_STEP_SUMMARY

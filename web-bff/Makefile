@@ -18,8 +18,14 @@ run:
 test-report:
 	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=html:coverage-reports --html="test-reports/test_report.html" --self-contained-html tests/
 
+# Default argument value for "test-out"
+test-out=reports
+
 test:
-	@poetry run pytest --asyncio-mode=auto --cov=app tests/
+	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=html:${test-out}/coverage --html="${test-out}/test/index.html" --self-contained-html tests/
+	# Deleting .gitignore file that is generated as part of coverage HTML report
+	# because it prevents the coverage report from being uploaded to Github Pages
+	rm ${test-out}/coverage/.gitignore
 
 poetry-add:
 	@poetry add $(package)
