@@ -7,6 +7,8 @@ docker run -p 8000:8000 --name web-bff-dev-container \
 	-v $(PWD)/web-bff/app:/src/app \
 	-v $(PWD)/web-bff/tests:/src/tests \
 	-v $(PWD)/web-bff/reports:/src/reports \
+	-v $(PWD)/web-bff/pyproject.toml:/src/pyproject.toml \
+  -v $(PWD)/web-bff/poetry.lock:/src/poetry.lock \
 	--rm \
 	web-bff-dev \
   "$@"
