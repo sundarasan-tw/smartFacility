@@ -27,6 +27,9 @@ test:
 	# because it prevents the coverage report from being uploaded to Github Pages
 	rm ${test-out}/coverage/.gitignore
 
+test-report-xml:
+	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=xml:${test-out}/coverage.xml --junitxml=${test-out}/test.xml tests/
+
 poetry-add:
 	@poetry add $(package)
 	@poetry lock
@@ -44,6 +47,9 @@ ci-check:
 	@poetry run ruff check .
 	@echo "Linting done.\nNow formatting..."
 	@poetry run ruff format --check .
+sonar-scan:
+	@echo "Running SonarQube scanner..."
+	@poetry run pysonar-scanner -Dproject.settings=sonar-scanner.properties
 
 # pre-commit:
 # 	@echo "Running pre-commit tasks (lint fix and format)..."

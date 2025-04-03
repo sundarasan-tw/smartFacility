@@ -51,6 +51,77 @@ To capture the test reports Web BFF app:
 ./scripts/dev-run-bff.sh test-report
 ```
 
+### Running sonar scan
+
+#### 1. Start SonarQube Server
+Run the following command to start the SonarQube server and its PostgreSQL dependency as Docker containers:
+
+```sh
+docker-compose -f docker-compose-sonarqube.yml up -d
+```
+
+This will start the SonarQube server at `http://localhost:9001`.
+
+#### 2. Access SonarQube
+Open your browser and navigate to:
+
+```
+http://localhost:9001
+```
+
+Use the default credentials to log in:
+- **Username**: `admin`
+- **Password**: `admin`
+
+#### 3. Create a Project and Obtain Token
+1. Once logged in, create a new project of type local with project key as `web-bff`.
+2. Generate a **project token** for authentication.
+
+#### 4. Update Sonar Scanner Configuration
+Replace the token in the Sonar Scanner configuration file:
+
+```
+web-bff/sonar-scanner.properties
+```
+
+#### 5. Run Sonar Scanner
+Execute the following script to analyze the project:
+
+```
+./scripts/sonar-scan.sh
+```
+
+This will successfully scan the project and upload the results to SonarQube.
+
+## Troubleshooting SonarQube Installation
+
+If your SonarQube server exits immediately due to a lack of virtual memory space, try the following steps:
+
+1. Open a terminal and run:
+   ```sh
+   rdctl shell
+   ```
+2. Check the current virtual memory setting:
+   ```sh
+   sysctl vm.max_map_count
+   ```
+   - If the value is set to `65536`, update it.
+3. Edit the `/etc/sysctl.conf` file:
+   ```sh
+   sudo vi /etc/sysctl.conf
+   ```
+4. Add the following line:
+   ```sh
+   vm.max_map_count = 262144
+   ```
+5. Save the changes.
+6. Restart `sysctl` by issuing below command,
+   ```bash
+   sudo sysctl -p
+   ```
+
+Now, try running SonarQube again.
+
 ## Submitting Changes
 
 Refer to [GitHub's guide on creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) for submitting your changes.
