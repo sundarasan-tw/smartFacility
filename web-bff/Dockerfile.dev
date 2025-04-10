@@ -1,7 +1,7 @@
 # Build the application
 FROM python:3.13-slim
 
-VOLUME ["/src/app", "/src/tests"]
+VOLUME ["/src/app", "/src/tests", "/src/reports"]
 
 ENV APP_HOME=/src
 

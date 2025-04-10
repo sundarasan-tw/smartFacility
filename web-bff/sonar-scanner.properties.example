@@ -1,0 +1,15 @@
+sonar.projectKey=web-bff
+sonar.projectName=Smarty Web BFF
+sonar.projectDescription=Smarty Web BFF is a backend-for-frontend (BFF) service that provides a unified API for the Smarty web application, enabling seamless communication between the frontend and various backend services.
+sonar.projectVersion=1.0
+sonar.projectBaseDir=/src
+sonar.sources=app
+sonar.tests=tests
+sonar.python.version=3.13
+sonar.sourceEncoding=UTF-8
+sonar.host.url=http://smartfacility-sonarqube-1:9000    
+sonar.token=sqp_9e976f6941xxxxxxxxxxxe63ee689505bf56c387
+sonar.exclusions=**/__pycache__/**, **/tests/**, **/test_*.py
+sonar.test.inclusions=**/tests/**, **/test_*.py
+sonar.python.coverage.reportPaths=reports/coverage.xml
+sonar.python.xunit.reportPath=reports/test.xml

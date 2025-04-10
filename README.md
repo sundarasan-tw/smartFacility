@@ -11,7 +11,15 @@ A unified platform that integrates smart devices across diverse facilities, empo
    cd smartFacility
    ```
 
-3. Run the application:
+3. Setup Configuration Files:
+   ```bash
+   ./scripts/create-config.sh
+   ```
+   Update the files with your local development environment details as needed. Refer [CONTRIBUTING.md](CONTRIBUTING.md) for more info.
+
+   **Note:** When any `*.example` config file is updated, please inform the team so they can update their cloned local config files.
+
+4. Run the application:
    ```bash
    # TODO: Add "docker compose up" command here once docker compose setup is done
    ```
