@@ -229,3 +229,7 @@ pyrightconfig.json
 
 ### Test and Coverage reports ###
 web-bff/reports/
+
+### SonarQube scanner ###
+**/.scannerwork
+sonar-scanner.properties

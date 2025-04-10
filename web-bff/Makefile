@@ -22,7 +22,21 @@ test-report:
 test-out=reports
 
 test:
-	@poetry run pytest --asyncio-mode=auto --cov=app --cov-report=html:${test-out}/coverage --html="${test-out}/test/index.html" --self-contained-html tests/
+	@poetry run pytest \
+		--asyncio-mode=auto \
+		--tb=short \
+		--maxfail=9999 \
+		--html="${test-out}/test/index.html" \
+		--self-contained-html \
+		--junitxml=${test-out}/test.xml \
+		--disable-warnings \
+		--capture=no \
+		--cov=app \
+		--cov-report term \
+		--cov-report=html:${test-out}/coverage \
+		--cov-report=xml:${test-out}/coverage.xml \
+		tests/
+
 	# Deleting .gitignore file that is generated as part of coverage HTML report
 	# because it prevents the coverage report from being uploaded to Github Pages
 	rm ${test-out}/coverage/.gitignore
@@ -44,6 +58,9 @@ ci-check:
 	@poetry run ruff check .
 	@echo "Linting done.\nNow formatting..."
 	@poetry run ruff format --check .
+sonar-scan:
+	@echo "Running SonarQube scanner..."
+	@poetry run pysonar-scanner -Dproject.settings=sonar-scanner.properties
 
 # pre-commit:
 # 	@echo "Running pre-commit tasks (lint fix and format)..."

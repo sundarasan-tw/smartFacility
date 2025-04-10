@@ -6,6 +6,7 @@ Thank you for considering contributing to the Smart Facility project! We welcome
 1. [Folder Structure](#folder-structure)
 2. [Development Workflow](#development-workflow)
    - [Running the App](#running-the-app)
+   - [Running Sonar Scan](#running-sonar-scan)
    <!-- - [Running Tests](#running-tests) -->
 3. [Submitting Changes](#submitting-changes)
 4. [Need Help?](#need-help)
@@ -50,6 +51,56 @@ To capture the test reports Web BFF app:
 ```bash
 ./scripts/dev-run-bff.sh test-report
 ```
+
+---
+
+### Running Sonar Scan
+
+---
+
+### One Time Setup
+
+#### 1. Start SonarQube Server
+Run the following command to start the SonarQube server and its PostgreSQL dependency as Docker containers:
+
+```sh
+docker-compose -f docker-compose-sonarqube.yml up -d
+```
+
+This will start the SonarQube server at [http://localhost:9001](http://localhost:9001).
+
+_Note: If your SonarQube server exits immediately due to a lack of virtual memory space, try running following these steps - [Troubleshooting SonarQube Installation](FAQ.md#troubleshooting-sonarqube-installation)_
+
+#### 2. Access SonarQube
+Open your browser and navigate [here](http://localhost:9001)
+
+Use the default credentials to log in:
+- **Username**: `admin`
+- **Password**: `admin`
+
+After logging in, SonarQube will prompt you to create a new password. Set your new password.
+
+#### 3. Create a Project and Obtain Token
+1. Once logged in, create a new project of type local with project key as `web-bff`.
+2. Generate a **project token** for authentication. Be sure to copy and save it securely — it won’t be shown again.
+
+#### 4. Update Sonar Scanner Configuration
+In the [`sonar-scanner.properties`](web-bff/sonar-scanner.properties.example) file located inside [`web-bff`](web-bff/) directory, replace the existing token with your new token under the key `sonar.token`.
+
+_If you don't have `web-bff/sonar-scanner.properties` then please refer to [project setup section](README.md#project-setup) to know how to create configuration files._
+
+---
+
+### Run Sonar Scanner
+Execute the following script to analyze the project:
+
+```bash
+./scripts/sonar-scan.sh
+```
+
+This will successfully scan the project and upload the results to SonarQube.
+
+---
 
 ## Submitting Changes
 
