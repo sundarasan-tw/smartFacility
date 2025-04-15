@@ -228,8 +228,8 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,python
 
 ### Test and Coverage reports ###
-web-bff/reports/
+/web-bff/reports/
 
 ### SonarQube scanner ###
 **/.scannerwork
-sonar-scanner.properties
+/web-bff/sonar-scanner.properties

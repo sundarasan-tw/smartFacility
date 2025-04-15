@@ -1,0 +1,254 @@
+name: Format and scan
+on:
+
+  push:
+    paths:
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
+      - .github/workflows/**
+
+      # Ignore trigger if changes detected in below paths
+      - '!**/*.md'
+      - '!**/.editorconfig'
+      - '!**/.pre-commit-config.yaml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build web-bff dev env image
+        run: |
+          docker build -t web-bff-dev-img -f ./web-bff/Dockerfile.dev ./web-bff
+          docker save web-bff-dev-img -o web-bff-dev-img.tar
+
+      - name: Upload image as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-bff-dev-img
+          path: web-bff-dev-img.tar
+
+  format:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-bff-dev-img
+
+      - name: Load docker image
+        run: docker load -i web-bff-dev-img.tar
+
+      - name: Lint and format
+        run: |
+          docker run -p 8000:8000 --name web-bff-lint-container \
+            -v ./web-bff/tests:/src/tests \
+            --rm \
+            web-bff-dev-img \
+            ci-check
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-bff-dev-img
+
+      - name: Load docker image
+        run: docker load -i web-bff-dev-img.tar
+
+      - name: Run tests
+        run: |
+          docker run -p 8000:8000 --name web-bff-test-container \
+            -v ./web-bff/reports:/src/reports \
+            -v ./web-bff/tests:/src/tests \
+            --rm \
+            web-bff-dev-img \
+            test
+
+      - name: Upload reports as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-test
+          path: web-bff/reports
+
+  scan-dep:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan dependencies for vulnerabilities
+        run: |
+          sudo mkdir -p web-bff/reports/trivy-dep
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ./.cache:/root/.cache/ \
+            -v ./web-bff/app:/src/app \
+            -v ./web-bff/tests:/src/tests \
+            -v ./web-bff/reports:/src/reports \
+            -v ./web-bff/pyproject.toml:/src/pyproject.toml \
+            -v ./web-bff/poetry.lock:/src/poetry.lock \
+            -v ./web-bff/.trivyignore:/.trivyignore \
+            -v ./web-bff/trivy.yaml:/trivy.yaml \
+            aquasec/trivy:0.61.0 \
+            fs \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            --format template \
+            --template "@contrib/html.tpl" \
+            --output /src/reports/trivy-dep/index.html \
+            /src
+
+      - name: Upload reports as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-dep
+          path: web-bff/reports
+
+  scan-img:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build production image
+        run: |
+          docker build -t web-bff-img -f ./web-bff/Dockerfile ./web-bff
+
+      - name: Scan production image for vulnerabilities
+        run: |
+          sudo mkdir -p web-bff/reports/trivy-img
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ./.cache:/root/.cache/ \
+            -v ./web-bff/.trivyignore:/.trivyignore \
+            -v ./web-bff/trivy.yaml:/trivy.yaml \
+            -v ./web-bff/reports:/src/reports \
+            aquasec/trivy:0.61.0 \
+            image \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            --format template \
+            --template "@contrib/html.tpl" \
+            --output /src/reports/trivy-img/index.html \
+            web-bff-img
+
+      - name: Upload reports as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-img
+          path: web-bff/reports
+
+  publish-reports:
+    needs: [test, scan-dep, scan-img]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Ensure the workflow can write repository contents to deploy github pages
+
+    steps:
+      - name: Set timestamp
+        run: |
+          echo "TIMESTAMP=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          name: reports-test
+          path: web-bff/reports
+
+      - name: Download dependencies security vulnerability scan reports
+        uses: actions/download-artifact@v4
+        with:
+          name: reports-dep
+          path: web-bff/reports
+
+      - name: Download image scan reports
+        uses: actions/download-artifact@v4
+        with:
+          name: reports-img
+          path: web-bff/reports
+
+      - name: Copy the reports into timestamp directory
+        run: |
+          # Copy the reports into timestamp directory
+          sudo mkdir -p web-bff/reports-temp
+          sudo mv web-bff/reports/* web-bff/reports-temp/
+          sudo mkdir -p web-bff/reports/${TIMESTAMP}
+          sudo mv web-bff/reports-temp/* web-bff/reports/${TIMESTAMP}/
+
+      - name: Fetch existing reports from GitHub Pages
+        run: |
+          git clone --depth=1 --branch=gh-pages https://github.com/${{ github.repository }} gh-pages
+          mkdir -p gh-pages/reports
+          sudo cp -r gh-pages/reports/* web-bff/reports/ || true  # Preserve existing reports
+
+      - name: Keep only the latest 5 reports
+        run: |
+          ls -d web-bff/reports/*/ | sort | head -n -5 | sudo xargs rm -rf
+
+      - name: Prepare GitHub Pages bundle
+        run: |
+          mkdir gh-pages-bundle
+          cp -r web-bff/reports gh-pages-bundle
+
+      # # Below code can be uncommented to
+      # # view the reports directory content
+      # - name: Print reports folder tree
+      #   uses: jaywcjlove/github-action-folder-tree@main
+      #   with:
+      #     path: gh-pages-bundle
+      #     depth: 3
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: gh-pages-bundle
+          clean: true # When `true`, it overwrites the static site content on each deployment, when `false` it appends
+
+      - name: Add report links to job summary
+        run: |
+          echo "### 📊 Reports" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Reports Timestamp:** ${TIMESTAMP}" >> $GITHUB_STEP_SUMMARY
+          echo "- [🔍 Test Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${TIMESTAMP}/test)" >> $GITHUB_STEP_SUMMARY
+          echo "- [📈 Coverage Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${TIMESTAMP}/coverage)" >> $GITHUB_STEP_SUMMARY
+          echo "- [📦 Trivy Dependency Scan Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${TIMESTAMP}/trivy-dep)" >> $GITHUB_STEP_SUMMARY
+          echo "- [🐳 Trivy Image Scan Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${TIMESTAMP}/trivy-img)" >> $GITHUB_STEP_SUMMARY

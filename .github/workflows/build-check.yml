@@ -1,0 +1,49 @@
+name: Build check
+on:
+
+  push:
+    paths:
+      - 'web-bff/**' # Trigger only for changes in the web-bff folder
+      - .github/workflows/**
+
+      # Ignore trigger if changes detected in below paths
+      - '!**/*.md'
+      - '!**/.editorconfig'
+      - '!**/.pre-commit-config.yaml'
+
+jobs:
+  build-run:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build web-bff hosted env image
+        run: |
+          docker build -t web-bff-img -f ./web-bff/Dockerfile ./web-bff
+
+      - name: Run the web-bff image
+        run: |
+          docker run -d --rm --name web-bff-container -p 8000:8000 web-bff-img
+
+      # TODO: Fix health endpoint check
+      # -------------------------------
+      #
+      # - name: Check health
+      #   uses: jtalk/url-health-check-action@v4
+      #   with:
+      #     url: http://localhost:8000/health
+      #     max-attempts: 3
+      #     retry-delay: 3s
+
+      - name: Stop the web-bff container
+        run: |
+          docker stop web-bff-container
