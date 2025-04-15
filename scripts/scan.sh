@@ -35,8 +35,6 @@ docker run --rm \
   -v $(PWD)/web-bff/reports:/src/reports \
   aquasec/trivy:0.61.0 \
   fs \
-  --format template \
-  --template "@contrib/html.tpl" \
   --output /src/reports/trivy-dep/index.html \
   /src
 
@@ -53,7 +51,5 @@ docker run --rm \
   -v $(PWD)/web-bff/reports:/src/reports \
   aquasec/trivy:0.61.0 \
   image \
-  --format template \
-  --template "@contrib/html.tpl" \
   --output /src/reports/trivy-img/index.html \
   web-bff
