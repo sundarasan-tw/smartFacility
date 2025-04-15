@@ -1,0 +1,27 @@
+# Use official Node.js image
+FROM node:22.14.0-alpine
+
+VOLUME [ ".next", "node_modules", "src" ]
+
+ENV APP_HOME=/app
+
+# Disable NextJS telemetry collection. To know more - https://nextjs.org/telemetry
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Set working directory inside the container
+WORKDIR $APP_HOME
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Copy source code
+COPY src src
+COPY eslint.config.mjs next-env.d.ts next.config.ts tsconfig.json ./
+
+# Expose the Next.js development port
+EXPOSE 3000
+
+# Start the Next.js dev server
+ENTRYPOINT ["npm"]
+CMD ["run", "dev"]
