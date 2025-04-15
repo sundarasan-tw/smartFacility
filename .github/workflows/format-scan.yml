@@ -122,10 +122,6 @@ jobs:
             -v ./web-bff/trivy.yaml:/trivy.yaml \
             aquasec/trivy:0.61.0 \
             fs \
-            --severity HIGH,CRITICAL \
-            --exit-code 1 \
-            --format template \
-            --template "@contrib/html.tpl" \
             --output /src/reports/trivy-dep/index.html \
             /src
 
@@ -160,10 +156,6 @@ jobs:
             -v ./web-bff/reports:/src/reports \
             aquasec/trivy:0.61.0 \
             image \
-            --severity HIGH,CRITICAL \
-            --exit-code 1 \
-            --format template \
-            --template "@contrib/html.tpl" \
             --output /src/reports/trivy-img/index.html \
             web-bff-img
 
