@@ -1,2 +1,11 @@
 pkg:
   include-dev-deps: true
+
+exit-code: 1
+
+format: template
+template: "@contrib/html.tpl"
+
+severity:
+  - HIGH
+  - CRITICAL
