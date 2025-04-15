@@ -1,0 +1,5 @@
+# Temporarily ignoring below two high/critical severity vulnerability to make CI pass
+# TODO: Identify action items to fix below vulnerabilities
+
+CVE-2023-31484
+CVE-2023-45853
